@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang="so">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>Kaydkayga</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1F4B45">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kaydkayga">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#F6F1E7; --surface:#FFFFFF; --ink:#2B211B; --muted:#7C6A57; --line:#E7DCC8;
+  --blue:#B65C38; --on-blue:#FFFFFF; --gold:#C89B3C; --good:#2F7D5D; --bad:#B3402E; --track:#EEE3D0;
+  --cover:#1F4B45;
+  --display:ui-rounded,'SF Pro Rounded','Avenir Next','Segoe UI Variable Display','Segoe UI',system-ui,-apple-system,sans-serif;
+  --body:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#181310; --surface:#241C17; --ink:#F2E9DC; --muted:#B7A48D; --line:#3A2E24;
+    --blue:#E08A5B; --on-blue:#1F140D; --gold:#E4B84C; --good:#4FAE83; --bad:#E3897A; --track:#3A2E24;
+    --cover:#12302C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#181310; --surface:#241C17; --ink:#F2E9DC; --muted:#B7A48D; --line:#3A2E24;
+  --blue:#E08A5B; --on-blue:#1F140D; --gold:#E4B84C; --good:#4FAE83; --bad:#E3897A; --track:#3A2E24;
+  --cover:#12302C;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.5 var(--body)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding:24px 18px calc(104px + env(safe-area-inset-bottom,0px))}
+.page-title{margin:0 0 22px;font:800 1.7rem/1.1 var(--display);letter-spacing:-.02em}
+section{margin-bottom:34px}
+/* Hide content in app switcher / when the tab is not visible */
+body.veil #app, body.veil .gate-in{visibility:hidden}
+
+.warn{margin:0 0 18px;padding:10px 14px;border:1.5px solid var(--bad);border-radius:12px;color:var(--bad);font-weight:600;font-size:.9rem}
+.gate .warn{border-color:#FFD9D2;color:#FFD9D2}
+
+/* Gate */
+.gate{position:fixed;inset:0;overflow:auto;background:var(--cover);color:#fff;z-index:20;padding:calc(28px + env(safe-area-inset-top,0px)) 20px calc(28px + env(safe-area-inset-bottom,0px))}
+.gate :focus-visible{outline-color:#fff}
+.gate-in{max-width:420px;margin:0 auto}
+.gate-star{width:60px;height:auto;display:block;margin-bottom:12px}
+.gate h1{margin:0;font:800 2.2rem/1 var(--display);letter-spacing:-.02em}
+.tagline{margin:8px 0 0;color:rgba(255,255,255,.85);font-size:.95rem}
+.gate .tagline{margin:8px 0 26px}
+.gate-hello{margin:0 0 16px;font:700 1.2rem/1.3 var(--display)}
+.g-field{margin:0 0 14px}
+.g-field label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px}
+.g-field input{width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,.5);border-radius:12px;background:rgba(255,255,255,.12);color:#fff;font-size:16px}
+.g-field input::placeholder{color:rgba(255,255,255,.65)}
+.pin{display:flex;gap:8px}
+.pin input{flex:1;min-width:0}
+.pin-eye{background:none;border:1.5px solid rgba(255,255,255,.5);color:#fff;border-radius:12px;padding:0 14px;font-weight:600;cursor:pointer;min-height:48px}
+.g-btn{width:100%;background:#fff;color:var(--cover);border:0;border-radius:14px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer;min-height:50px;margin-top:6px}
+.g-btn:disabled{opacity:.6;cursor:default}
+.g-link{background:none;border:0;color:#fff;text-decoration:underline;padding:12px 0;cursor:pointer;min-height:44px}
+.g-err{color:#FFD9D2;min-height:1.3em;margin:0 0 8px;font-size:.9rem}
+.g-note{font-size:.85rem;color:rgba(255,255,255,.85);margin:14px 0 0}
+.g-warn{font-size:.85rem;font-weight:600;margin:14px 0 0}
+
+/* Cover */
+.cover{position:relative;overflow:hidden;background:var(--cover);color:#fff;border-radius:0 0 28px 28px;margin-top:calc(-1 * env(safe-area-inset-top,0px));padding:calc(18px + env(safe-area-inset-top,0px)) 18px 28px}
+.cover-bg{position:absolute;right:-50px;top:50px;width:250px;height:auto;opacity:.09;pointer-events:none}
+.cover :focus-visible{outline-color:#fff}
+.cover-in{position:relative;max-width:560px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.top h1{margin:0;font:800 1.6rem/1 var(--display);letter-spacing:-.02em;color:#fff}
+.top-r{display:flex;align-items:center;gap:8px;min-width:0}
+.pill{background:rgba(255,255,255,.14);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:999px;padding:8px 12px;font-size:.875rem;font-weight:500;cursor:pointer;min-height:38px}
+.cur{max-width:44vw}
+.cur option{color:#10233B;background:#fff}
+.hero{display:grid;grid-template-columns:96px 1fr;gap:18px;align-items:center;padding:22px 0 0}
+.hero svg{width:96px;height:auto;display:block}
+#starRect{transition:y .7s ease,height .7s ease}
+.lbl{margin:0;color:rgba(255,255,255,.78);font-size:.9rem}
+.total{margin:2px 0 6px;font:800 clamp(1.9rem,9vw,2.7rem)/1.05 var(--display);letter-spacing:-.02em;overflow-wrap:anywhere;color:#fff}
+.sub{margin:0;color:rgba(255,255,255,.82);font-size:.9rem}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 30px}
+.btn{border:1.5px solid transparent;border-radius:14px;padding:14px 12px;font-weight:600;cursor:pointer;min-height:48px}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.primary{background:var(--blue);color:var(--on-blue)}
+.btn.ghost{background:transparent;border-color:var(--ink)}
+.btn.danger{background:var(--bad);color:#fff}
+
+.remind{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1.5px solid var(--gold);border-radius:14px;padding:12px 14px;margin:0 0 22px}
+.remind p{margin:0;font-weight:600}
+.cheer{border-left:4px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 28px}
+.cheer h2{margin:0 0 4px;font:700 1.1rem/1.2 var(--display)}
+.cheer p{margin:0}
+
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.sec-head h2{margin:0;font:700 1.25rem/1.2 var(--display);letter-spacing:-.01em}
+.link{background:none;border:0;color:var(--blue);font-weight:600;cursor:pointer;padding:8px 0;min-height:40px}
+
+.goal{padding:16px 0;border-bottom:1px solid var(--line)}
+.g-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.g-top h3{margin:0;font:700 1.15rem/1.25 var(--display);overflow-wrap:anywhere}
+.g-amt{margin:0;color:var(--muted);font-size:.9rem;text-align:right;white-space:nowrap}
+.g-amt strong{color:var(--ink);font-weight:600}
+.bar{height:10px;border-radius:6px;background:var(--track);margin:10px 0 8px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--blue);border-radius:6px;transition:width .5s ease}
+.bar.done span{background:var(--gold)}
+.g-meta{display:flex;flex-wrap:wrap;gap:2px 16px;margin:0;font-size:.875rem;color:var(--muted)}
+.g-meta .ok{color:var(--good);font-weight:600}
+.g-act{display:flex;gap:6px;margin-top:8px}
+.mini{background:none;border:0;padding:8px 10px 8px 0;min-height:40px;font-size:.9rem;font-weight:600;color:var(--blue);cursor:pointer}
+.mini.quiet{color:var(--muted);font-weight:500}
+.empty{margin:18px 0;color:var(--muted)}
+.hint{margin:14px 0 0;color:var(--muted);font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:.875rem;font-weight:500;cursor:pointer;min-height:40px;text-align:left}
+.preset-row{padding-top:14px}
+.preset-row p{margin:0;color:var(--muted);font-size:.9rem}
+
+.tx{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.tx .t-name{font-weight:600;overflow-wrap:anywhere}
+.tx .t-sub{grid-column:1;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
+.tx .t-amt{grid-row:1;grid-column:2;font:700 1.05rem var(--display);text-align:right}
+.tx .t-amt.in{color:var(--good)}
+.tx .t-amt.out{color:var(--bad)}
+.tx .mini{grid-row:2;grid-column:2;justify-self:end;padding:4px 0;min-height:32px;font-size:.8rem}
+.foot{color:var(--muted);font-size:.8rem;margin:10px 0 0}
+
+/* Plan */
+.ta{display:block;width:100%;min-height:150px;margin-top:14px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-size:16px;line-height:1.5;resize:vertical}
+.sum{margin:12px 0 0}
+.sum div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.sum .k{color:var(--muted)}
+.sum .v{font-weight:600}
+.sum .last .v{font:800 1.25rem var(--display)}
+.sum .neg .v{color:var(--bad)}
+.sp{padding:12px 0;border-bottom:1px solid var(--line)}
+.sp-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.sp-top .n{font-weight:600;overflow-wrap:anywhere}
+.sp-top .a{color:var(--muted);font-size:.9rem;white-space:nowrap}
+.sp-top .a strong{color:var(--ink);font-weight:600}
+.sp .bar{height:8px;margin:8px 0 0}
+.stops{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.stop{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1.5px solid var(--bad);border-radius:999px;padding:4px 4px 4px 14px;font-weight:500}
+.stop button{background:none;border:0;font-size:1.2rem;line-height:1;width:32px;height:32px;border-radius:50%;cursor:pointer;color:var(--muted)}
+.row{display:flex;gap:8px;margin-top:12px}
+.row input[type="text"]{flex:1;min-width:0;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-size:16px}
+.row .btn{padding:12px 16px}
+.tip{border-left:3px solid var(--gold);padding:2px 0 2px 14px;margin:16px 0}
+.tip p{margin:0}
+.ai-out{white-space:pre-wrap;margin:16px 0 0;line-height:1.6;overflow-wrap:anywhere}
+.ai-out:empty{display:none}
+.ai-note{color:var(--bad);font-size:.9rem;margin:8px 0 0}
+.ai-note:empty{display:none}
+
+/* Me */
+.who{display:flex;align-items:center;gap:14px;margin:0 0 30px}
+.avatar{width:56px;height:56px;border-radius:50%;background:var(--blue);color:var(--on-blue);display:grid;place-items:center;font:800 1.5rem var(--display);flex:none}
+.who h2{margin:0;font:700 1.25rem/1.2 var(--display);overflow-wrap:anywhere}
+.who p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.check{display:flex;gap:12px;align-items:center;font-weight:600;min-height:44px;margin-top:10px}
+.check input{width:22px;height:22px}
+.opt{display:block;margin:12px 0 0}
+.opt>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px}
+.opt select,.opt input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-size:16px}
+.plan{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.plan strong{font:700 1.1rem var(--display)}
+.plan span{display:block;color:var(--muted);font-size:.85rem}
+.price{font:800 1.4rem var(--display)}
+.stack{display:grid;gap:10px;margin-top:14px}
+.priv{margin:14px 0 0;padding-left:20px}
+.priv li{margin:0 0 8px}
+
+/* Nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.nav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;min-height:54px;border-radius:12px;font-size:.75rem;font-weight:600;color:var(--muted);cursor:pointer}
+.nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav button[aria-current="page"]{color:var(--blue)}
+
+/* Dialogs */
+dialog{border:0;border-radius:22px;padding:22px 20px;width:min(92vw,440px);max-height:90%;overflow:auto;background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(8,18,32,.6)}
+dialog h2{margin:0 0 16px;font:700 1.35rem/1.2 var(--display)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--bg);padding:4px;border-radius:14px;margin-bottom:16px}
+.seg label{position:relative;display:block}
+.seg input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.seg span{display:block;text-align:center;padding:10px;border-radius:10px;font-weight:600;color:var(--muted)}
+.seg input:checked+span{background:var(--blue);color:var(--on-blue)}
+.seg input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.field{display:block;margin:0 0 14px}
+.field>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);font-size:16px}
+.err{color:var(--bad);font-size:.9rem;min-height:1.3em;margin:0 0 8px}
+.dlg-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+.dlg-actions .btn{padding:12px 18px}
+.msg{margin:0 0 14px}
+dialog .chips{margin:0 0 14px}
+dialog ul{margin:0 0 14px;padding-left:20px}
+dialog details{margin:0 0 16px}
+dialog summary{cursor:pointer;font-weight:600;color:var(--blue);min-height:40px;display:flex;align-items:center}
+dialog pre{margin:8px 0 0;max-height:200px;overflow:auto;background:var(--bg);border-radius:10px;padding:10px;font-size:.75rem;white-space:pre-wrap;overflow-wrap:anywhere}
+
+@media (prefers-reduced-motion: reduce){
+  #starRect,.bar span{transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Setup / unlock -->
+<div id="gate" class="gate" hidden>
+  <div class="gate-in">
+    <svg class="gate-star" viewBox="0 0 100 92" aria-hidden="true"><g id="gateIcon"></g></svg>
+    <h1>Kaydkayga</h1>
+    <p class="tagline">Kayd yar, mustaqbal weyn.</p>
+    <p class="warn" id="storeWarnG" role="alert" hidden>Browser-kan ma ogola in xogta la kaydiyo. Wixii aad gelisid way luntaa marka aad xirto.</p>
+    <p class="g-note" id="gateRemind" hidden>Xasuusin: waa waqtigii aad kaydin lahayd.</p>
+
+    <p class="warn" id="cryptoErr" role="alert" hidden>Browser-kan ma taageerayo xifaadka, sidaas darteed xogtaada lama kaydin karo si ammaan ah. Isticmaal browser cusub.</p>
+
+    <div id="signup" hidden>
+      <div class="g-field"><label for="suName">Magac ama naaneys (ikhtiyaari)</label><input id="suName" type="text" maxlength="30" autocomplete="off" placeholder="tusaale: Axmed"></div>
+      <div class="g-field"><label for="suPin">PIN (ugu yaraan 8 xaraf)</label>
+        <div class="pin"><input id="suPin" type="password" maxlength="32" autocomplete="new-password" autocapitalize="off" spellcheck="false"><button type="button" class="pin-eye" data-act="pin-eye" data-target="suPin">Muuji</button></div>
+      </div>
+      <div class="g-field"><label for="suPin2">Ku celi PIN-ka</label>
+        <input id="suPin2" type="password" maxlength="32" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+      </div>
+      <p class="g-err" id="suErr" role="alert"></p>
+      <button class="g-btn" id="suBtn" data-act="signup">Bilow</button>
+      <p class="g-note">PIN-ka keliya ayaa loo baahan yahay. Ma ururinno Gmail, jinsi ama macluumaad kale. Xogtaada waxaa lagu xifaadaa qalabkan PIN-kaaga.</p>
+      <p class="g-warn">Muhiim: PIN-ka dib looma soo kaban karo. Haddii aad illowdo, xogta waa lumaysaa.</p>
+    </div>
+
+    <div id="unlock" hidden>
+      <p class="gate-hello" id="ulHello"></p>
+      <div class="g-field"><label for="ulPin">PIN</label>
+        <div class="pin"><input id="ulPin" type="password" maxlength="32" autocomplete="current-password" autocapitalize="off" spellcheck="false"><button type="button" class="pin-eye" data-act="pin-eye" data-target="ulPin">Muuji</button></div>
+      </div>
+      <p class="g-err" id="ulErr" role="alert"></p>
+      <button class="g-btn" id="ulBtn" data-act="unlock">Fur</button>
+      <button class="g-link" data-act="forgot">PIN-ka ma illowday?</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" hidden>
+
+  <!-- HOME -->
+  <div class="panel" data-panel="home">
+    <header class="cover">
+      <svg class="cover-bg" viewBox="0 0 100 92" aria-hidden="true"><g id="bgIcon"></g></svg>
+      <div class="cover-in">
+        <div class="top">
+          <h1>Kaydkayga</h1>
+          <div class="top-r">
+            <button class="pill" id="eye" data-act="toggle-hide" aria-pressed="false">Qari</button>
+            <select id="cur" class="pill cur" aria-label="Nooca lacagta"></select>
+          </div>
+        </div>
+        <p class="tagline" id="tag"></p>
+        <div class="hero">
+          <svg id="star" viewBox="0 0 100 92" role="img" aria-label="Horumarka hadafyada"></svg>
+          <div>
+            <p class="lbl">Wadarta kaydka</p>
+            <p class="total" id="total"></p>
+            <p class="sub" id="month"></p>
+            <p class="sub" id="overall"></p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <p class="warn" id="storeWarnA" role="alert" hidden>Browser-kan ma ogola in xogta la kaydiyo. Wixii aad gelisid way luntaa marka aad xirto.</p>
+      <div class="remind" id="remind" hidden>
+        <p>Xasuusin: waa waqtigii aad kaydin lahayd.</p>
+        <span>
+          <button class="mini" data-act="remind-add">Ku dar lacag</button>
+          <button class="mini quiet" data-act="remind-dismiss">Waa la arkay</button>
+        </span>
+      </div>
+
+      <div class="cheer" id="cheer"></div>
+
+      <div class="actions">
+        <button class="btn primary" data-act="add-in">Ku dar lacag</button>
+        <button class="btn ghost" data-act="add-out">Ka qaad lacag</button>
+      </div>
+
+      <section>
+        <div class="sec-head">
+          <h2>Kaydadka iyo hadafyada</h2>
+          <button class="link" data-act="new-goal">+ Cusub</button>
+        </div>
+        <div id="goals"></div>
+      </section>
+
+      <section>
+        <div class="sec-head"><h2>Taariikhda</h2></div>
+        <div id="hist"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- PLAN -->
+  <div class="panel" data-panel="plan" hidden>
+    <div class="wrap">
+      <h1 class="page-title">Qorshe</h1>
+
+      <section>
+        <div class="sec-head"><h2>Mushaharka iyo kharashka</h2></div>
+        <p class="hint">Qor mushaharkaaga, waxa aad bixiso iyo inta aad kaydin karto. Sadar kasta hal shay: lacagta iyo magaca. Ha ku qorin magacyo dad ama lambarro xisaab.</p>
+        <textarea id="bText" class="ta" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Liiska mushaharka iyo kharashka" placeholder="300 mushahar&#10;10 koronto&#10;5 biyo&#10;40 shopping&#10;50 kayd"></textarea>
+        <div id="bSum"></div>
+      </section>
+
+      <section id="spSec" hidden>
+        <div class="sec-head"><h2>Halka lacagtu ku baxdo</h2></div>
+        <div id="spBreak"></div>
+      </section>
+
+      <section>
+        <div class="sec-head"><h2>Waxaan joojinayaa</h2></div>
+        <p class="hint">Qor waxyaabaha aad rabto inaad joojiso.</p>
+        <div class="chips" id="stopSug"></div>
+        <div class="stops" id="stopList"></div>
+        <div class="row">
+          <input id="stopIn" type="text" maxlength="60" autocomplete="off" placeholder="tusaale: cunto bannaan" aria-label="Wax aad joojinayso">
+          <button class="btn ghost" data-act="stop-add-input">Ku dar</button>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head"><h2>Talooyin</h2></div>
+        <div id="tips"></div>
+      </section>
+
+      <section id="aiSec" hidden>
+        <div class="sec-head"><h2>Caawiye AI</h2></div>
+        <p class="hint">AI-gu wuxuu akhrinayaa mushaharkaaga, kharashkaaga, kaydadkaaga iyo waxa aad joojinayso, kadibna wuxuu ku siinayaa talo. Kahor intaan la dirin, waxaad arki doontaa waxa la diri doono.</p>
+        <div class="row">
+          <input id="aiQ" type="text" maxlength="200" autocomplete="off" placeholder="Su'aal gaar ah (ikhtiyaari)" aria-label="Su'aal gaar ah">
+        </div>
+        <div class="stack">
+          <button class="btn primary" id="aiAsk" data-act="ai-ask">Talo ii sii</button>
+          <button class="btn ghost" id="aiStop" data-act="ai-stop" hidden>Jooji</button>
+        </div>
+        <div class="ai-out" id="aiOut" aria-live="polite"></div>
+        <p class="ai-note" id="aiNote" role="alert"></p>
+        <p class="foot">AI-gu wuu qaldami karaa. Talooyinku waa kuwo guud, maaha talo maaliyadeed oo rasmi ah.</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- ME -->
+  <div class="panel" data-panel="me" hidden>
+    <div class="wrap">
+      <h1 class="page-title">Anigu</h1>
+      <div class="who">
+        <div class="avatar" id="meInitial" aria-hidden="true"></div>
+        <div><h2 id="meName"></h2><p>Xogtaada waa la xifaadey.</p></div>
+      </div>
+
+      <section>
+        <div class="sec-head"><h2>Xasuusin</h2></div>
+        <label class="check"><input type="checkbox" id="remOn"> Xasuusi kaydinta</label>
+        <div id="remOpts" hidden>
+          <label class="opt"><span>Inta jeer</span>
+            <select id="remFreq"><option value="daily">Maalin kasta</option><option value="weekly">Isbuuc kasta</option></select>
+          </label>
+          <label class="opt" id="remDayField" hidden><span>Maalinta</span><select id="remDay"></select></label>
+          <label class="opt"><span>Waqtiga</span><input id="remTime" type="time"></label>
+        </div>
+        <p class="foot">Xasuusintu waxay soo baxdaa marka app-kan furan yahay. Ma muujiso lacag ama xog gaar ah. Ogeysiis telefoonka ah oo aan app-ka la furin waxay u baahan tahay app dhab ah.</p>
+      </section>
+
+      <section>
+        <div class="sec-head"><h2>Ishtiraak</h2></div>
+        <div class="plan"><div><strong>1 isbuuc</strong><span>Bixin isbuuc kasta</span></div><div class="price">$0.50</div></div>
+        <div class="plan"><div><strong>1 bil</strong><span>Bixin bil kasta</span></div><div class="price">$1.50</div></div>
+        <p class="foot">Bixinta weli lama xirin app-kan, sidaas darteed lacag lagaama qaadayo. Qiimayaashu waa kuwo la muujiyay oo keliya.</p>
+      </section>
+
+      <section>
+        <div class="sec-head"><h2>Sirta iyo amniga</h2></div>
+        <ul class="priv">
+          <li>Xogtaada waxaa lagu xifaadaa qalabkan (AES-256) iyadoo la isticmaalayo PIN-kaaga.</li>
+          <li>Ma ururinno Gmail, jinsi ama magac dhab ah. Naaneys waa ikhtiyaari.</li>
+          <li>App-ku xogtaada ma dirayo meel kale, marka laga reebo markaad codsato talo AI ah.</li>
+          <li>PIN-ka dib looma soo kaban karo. Haddii aad illowdo, xogta waa lumaysaa.</li>
+        </ul>
+        <label class="opt"><span>Qufuli toos ah kadib</span>
+          <select id="autoLock"><option value="1">1 daqiiqo</option><option value="2">2 daqiiqo</option><option value="5">5 daqiiqo</option><option value="15">15 daqiiqo</option></select>
+        </label>
+        <div class="stack">
+          <button class="btn ghost" data-act="pin-change">Beddel PIN</button>
+          <button class="btn ghost" data-act="lock">Xir (qufuli)</button>
+          <button class="btn ghost" data-act="reset-ask">Tirtir xogta dhammaan</button>
+        </div>
+        <p class="foot" id="pinDone" role="status"></p>
+      </section>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label="Menu">
+    <button data-act="tab" data-tab="home" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Guriga
+    </button>
+    <button data-act="tab" data-tab="plan">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Qorshe
+    </button>
+    <button data-act="tab" data-tab="me">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Anigu
+    </button>
+  </nav>
+</div>
+
+<dialog id="dlgTx" aria-labelledby="txTitle">
+  <h2 id="txTitle">Ku dar lacag</h2>
+  <div class="seg">
+    <label><input type="radio" name="txType" value="in" checked><span>Ku dar</span></label>
+    <label><input type="radio" name="txType" value="out"><span>Ka qaad</span></label>
+  </div>
+  <label class="field"><span>Kaydka</span><select id="txGoal"></select></label>
+  <label class="field"><span>Lacagta</span><input id="txAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"></label>
+  <label class="field"><span>Taariikhda</span><input id="txDate" type="date"></label>
+  <label class="field"><span>Qoraal (ikhtiyaari)</span><input id="txNote" type="text" maxlength="80" autocomplete="off" placeholder="tusaale: mushaharka, kirada"></label>
+  <p class="err" id="txErr" role="alert"></p>
+  <div class="dlg-actions">
+    <button class="btn ghost" data-act="close">Jooji</button>
+    <button class="btn primary" data-act="tx-save">Kaydi</button>
+  </div>
+</dialog>
+
+<dialog id="dlgGoal" aria-labelledby="goalTitle">
+  <h2 id="goalTitle">Kayd ama hadaf cusub</h2>
+  <div class="chips" id="presetChips"></div>
+  <label class="field"><span>Magaca</span><input id="gName" type="text" maxlength="40" autocomplete="off" placeholder="tusaale: Xaj, Guur, Baabuur"></label>
+  <label class="field"><span>Lacagta hadda jirta (ikhtiyaari)</span><input id="gInit" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"></label>
+  <label class="field"><span>Lacagta aad rabto inaad gaarto (ikhtiyaari)</span><input id="gTarget" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"></label>
+  <label class="field"><span>Taariikhda aad rabto inaad gaarto (ikhtiyaari)</span><input id="gDeadline" type="date"></label>
+  <p class="err" id="gErr" role="alert"></p>
+  <div class="dlg-actions">
+    <button class="btn ghost" data-act="close">Jooji</button>
+    <button class="btn primary" data-act="goal-save">Kaydi</button>
+  </div>
+</dialog>
+
+<dialog id="dlgPin" aria-labelledby="cpTitle">
+  <h2 id="cpTitle">Beddel PIN</h2>
+  <label class="field"><span>PIN-ka hadda jira</span><input id="cpCur" type="password" maxlength="32" autocomplete="current-password" autocapitalize="off" spellcheck="false"></label>
+  <label class="field"><span>PIN cusub (ugu yaraan 8 xaraf)</span><input id="cpNew" type="password" maxlength="32" autocomplete="new-password" autocapitalize="off" spellcheck="false"></label>
+  <label class="field"><span>Ku celi PIN cusub</span><input id="cpNew2" type="password" maxlength="32" autocomplete="new-password" autocapitalize="off" spellcheck="false"></label>
+  <p class="err" id="cpErr" role="alert"></p>
+  <div class="dlg-actions">
+    <button class="btn ghost" data-act="close">Jooji</button>
+    <button class="btn primary" id="cpBtn" data-act="pin-save">Beddel</button>
+  </div>
+</dialog>
+
+<dialog id="dlgAi" aria-labelledby="aiTitle">
+  <h2 id="aiTitle">Ogolaansho: dirista xogta</h2>
+  <p class="msg">Si AI-gu talo kuu siiyo, xogtan waxaa loo diraa Claude:</p>
+  <ul>
+    <li>mushaharka iyo kharashka aad qortay</li>
+    <li>kaydadkaaga (magac iyo lacag)</li>
+    <li>waxa aad joojinayso iyo su'aashaada</li>
+  </ul>
+  <p class="msg">Magacaaga, PIN-kaaga iyo xogta kale looma dirayo.</p>
+  <details><summary>Eeg waxa la diri doono</summary><pre id="aiPreview"></pre></details>
+  <div class="dlg-actions">
+    <button class="btn ghost" data-act="close">Jooji</button>
+    <button class="btn primary" data-act="ai-consent">Ogolow oo dir</button>
+  </div>
+</dialog>
+
+<dialog id="dlgConfirm" aria-labelledby="cfTitle">
+  <h2 id="cfTitle">Tirtir</h2>
+  <p class="msg" id="cfMsg"></p>
+  <div class="dlg-actions">
+    <button class="btn ghost" data-act="close">Jooji</button>
+    <button class="btn danger" data-act="confirm-yes">Tirtir</button>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  var SO_MONTHS=['Janaayo','Febraayo','Maarso','Abriil','Maajo','Juun','Luuliyo','Ogosto','Sebtembar','Oktoobar','Nofembar','Desembar'];
+  var SO_DAYS=['Axad','Isniin','Talaado','Arbaco','Khamiis','Jimce','Sabti'];
+  var CURRENCIES=[['USD','Doolar (USD)'],['KES','Shilin Kenya (KES)'],['ETB','Birr (ETB)'],['EUR','Yuuro (EUR)'],['GBP','Bound (GBP)'],['AED','Dirham (AED)'],['SAR','Riyaal (SAR)'],['SOS','Shilin Soomaali (SOS)']];
+  var PRESETS=['Xaj','Guur','Xaaladaha degdega','Baabuur / Hami'];
+  var STOP_SUGGEST=['Balwad','Shopping badan','Waxa aan muhiim ahayn'];
+  var V1='kaydkayga:v1', V2='kaydkayga:v2', REM='kaydkayga:rem', LOCK='kaydkayga:lock';
+  var ITER=600000;
+  var WEAK=['12345678','123456789','1234567890','87654321','password','password1','qwertyui','abcdefgh','11111111','00000000','12341234'];
+
+  var cryptoOk=!!(window.crypto&&window.crypto.subtle&&window.TextEncoder&&window.TextDecoder);
+  var enc=window.TextEncoder?new TextEncoder():null, dec=window.TextDecoder?new TextDecoder():null;
+  var AAD=enc?enc.encode('kaydkayga:v2'):null;
+
+  /* ---------- State (lives only in memory; stored encrypted) ---------- */
+  function defaults(){
+    return {currency:'USD',nick:'',goals:[],tx:[],budget:{text:''},stops:[],settings:{hide:false,autoLock:2}};
+  }
+  function normalize(s){
+    var d=defaults(); s=(s&&typeof s==='object')?s:{};
+    var nick=typeof s.nick==='string'?s.nick:((s.profile&&s.profile.name)?String(s.profile.name):'');
+    return {
+      currency:s.currency||d.currency,
+      nick:nick.slice(0,30),
+      goals:Array.isArray(s.goals)?s.goals:[],
+      tx:Array.isArray(s.tx)?s.tx:[],
+      budget:{text:(s.budget&&typeof s.budget.text==='string')?s.budget.text:''},
+      stops:Array.isArray(s.stops)?s.stops:[],
+      settings:Object.assign(d.settings,s.settings||{})
+    };
+  }
+  var state=defaults();
+  var key=null, vault=null;          // AES key (non-extractable) and salt/iterations, only while unlocked
+
+  /* Reminder preferences are not sensitive and stay readable so a reminder can fire while locked */
+  function defaultRem(){return {on:false,freq:'daily',day:5,time:'20:00',lastKey:''};}
+  function loadRem(){
+    try{ var s=JSON.parse(localStorage.getItem(REM)); if(s&&typeof s==='object') return Object.assign(defaultRem(),s); }catch(e){}
+    return defaultRem();
+  }
+  var rem=loadRem();
+  function saveRem(){ try{ localStorage.setItem(REM,JSON.stringify(rem)); }catch(e){} }
+
+  /* ---------- Helpers ---------- */
+  var $=function(s){return document.querySelector(s);};
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function uid(){
+    try{ var a=new Uint8Array(8); crypto.getRandomValues(a); return Array.from(a).map(function(b){return b.toString(16).padStart(2,'0');}).join(''); }
+    catch(e){ return Math.random().toString(36).slice(2,10)+Date.now().toString(36); }
+  }
+  function round2(n){return Math.round(n*100)/100;}
+  var MASK='\u2022\u2022\u2022\u2022';
+  function money(n){
+    if(state.settings.hide) return MASK;
+    try{
+      return new Intl.NumberFormat('en-US',{style:'currency',currency:state.currency,minimumFractionDigits:0,maximumFractionDigits:2}).format(n);
+    }catch(e){ return n.toFixed(2)+' '+state.currency; }
+  }
+  function pad(n){return String(n).padStart(2,'0');}
+  function fmtYMD(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function todayStr(){return fmtYMD(new Date());}
+  function dayStr(offset){var d=new Date();d.setDate(d.getDate()-offset);return fmtYMD(d);}
+  function parseD(s){var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
+  function fmtDate(s){var d=parseD(s);return d.getDate()+' '+SO_MONTHS[d.getMonth()]+' '+d.getFullYear();}
+  function b64(buf){var a=new Uint8Array(buf),s='';for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s);}
+  function unb64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
+  function busy(btn,on){
+    if(on){ btn.dataset.t=btn.textContent; btn.textContent='Fadlan sug...'; btn.disabled=true; }
+    else{ if(btn.dataset.t) btn.textContent=btn.dataset.t; btn.disabled=false; }
+  }
+
+  function signed(t){return t.type==='in'?t.amount:-t.amount;}
+  function goalSaved(id){return round2(state.tx.filter(function(t){return t.goalId===id;}).reduce(function(a,t){return a+signed(t);},0));}
+  function generalSaved(){return round2(state.tx.filter(function(t){return !t.goalId;}).reduce(function(a,t){return a+signed(t);},0));}
+  function totalSaved(){return round2(state.tx.reduce(function(a,t){return a+signed(t);},0));}
+  function monthNet(){
+    var p=todayStr().slice(0,7);
+    return round2(state.tx.filter(function(t){return t.date.slice(0,7)===p;}).reduce(function(a,t){return a+signed(t);},0));
+  }
+  function netBetween(fromOff,toOff){
+    var a=dayStr(fromOff), b=dayStr(toOff);
+    var list=state.tx.filter(function(t){return t.date>=a&&t.date<=b;});
+    return {net:round2(list.reduce(function(s,t){return s+signed(t);},0)),count:list.length};
+  }
+  function goalName(id){
+    if(!id) return 'Kayd guud';
+    var g=state.goals.filter(function(x){return x.id===id;})[0];
+    return g?g.name:'Kayd guud';
+  }
+  function firstName(){ return (state.nick||'').trim().split(' ')[0]; }
+  function nm(){ var n=firstName(); return n?', '+n:''; }
+
+  /* ---------- Encryption at rest ---------- */
+  async function deriveKey(pin,salt,iter){
+    var base=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+  }
+  async function writeVault(){
+    var k=key, v=vault; if(!k||!v) return;
+    var iv=crypto.getRandomValues(new Uint8Array(12));
+    var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv,additionalData:AAD},k,enc.encode(JSON.stringify(state)));
+    localStorage.setItem(V2,JSON.stringify({v:2,salt:b64(v.salt),iter:v.iter,iv:b64(iv),ct:b64(ct)}));
+  }
+  var saving=false, dirty=false, pf=null, storeFailed=false;
+  function setStoreFail(f){
+    storeFailed=f;
+    $('#storeWarnA').hidden=!f; $('#storeWarnG').hidden=!f;
+  }
+  async function flush(){
+    saving=true;
+    try{
+      while(dirty){
+        dirty=false;
+        try{ await writeVault(); setStoreFail(false); }catch(e){ setStoreFail(true); }
+      }
+    }finally{ saving=false; }
+  }
+  function save(){
+    if(!key) return pf;
+    dirty=true;
+    if(!saving) pf=flush();
+    return pf;
+  }
+  function hasVault(){ try{ return localStorage.getItem(V2)!==null; }catch(e){ return false; } }
+  function readLegacy(){
+    try{ var raw=localStorage.getItem(V1); if(!raw) return null; var s=JSON.parse(raw); return (s&&typeof s==='object')?s:null; }catch(e){ return null; }
+  }
+  async function legacyHash(pin,salt){
+    try{
+      var buf=await crypto.subtle.digest('SHA-256',enc.encode(salt+':'+pin));
+      return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+    }catch(e){}
+    var h=5381,s=salt+':'+pin;
+    for(var i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0;
+    return 'f'+h;
+  }
+
+  /* ---------- Failed-attempt delay (speed bump; the real barrier is PBKDF2 + the PIN) ---------- */
+  function lockInfo(){ try{ return JSON.parse(localStorage.getItem(LOCK))||{fails:0,until:0}; }catch(e){ return {fails:0,until:0}; } }
+  function lockWait(){ return Math.max(0,Math.ceil((lockInfo().until-Date.now())/1000)); }
+  function noteFail(){
+    var l=lockInfo(); l.fails=(l.fails||0)+1;
+    if(l.fails>=3) l.until=Date.now()+Math.min(3600,30*Math.pow(2,l.fails-3))*1000;
+    try{ localStorage.setItem(LOCK,JSON.stringify(l)); }catch(e){}
+  }
+  function clearFails(){ try{ localStorage.removeItem(LOCK); }catch(e){} }
+  var waitTimer=null, waiting=false;
+  function showWait(){
+    clearInterval(waitTimer);
+    var btn=$('#ulBtn'), el=$('#ulErr');
+    if(lockWait()<=0){ btn.disabled=false; if(waiting){ el.textContent=''; waiting=false; } return; }
+    function tick(){
+      var s=lockWait();
+      if(s<=0){ clearInterval(waitTimer); btn.disabled=false; if(waiting){ el.textContent=''; waiting=false; } return; }
+      waiting=true; btn.disabled=true; el.textContent='Isku day badan. Sug '+s+' ilbiriqsi.';
+    }
+    tick(); waitTimer=setInterval(tick,1000);
+  }
+
+  function pinProblem(pin,pin2){
+    if(pin.length<8) return 'PIN-ku waa inuu ahaadaa ugu yaraan 8 xaraf.';
+    if(/^(.)\1+$/.test(pin)||WEAK.indexOf(pin.toLowerCase())>-1) return 'PIN-kan aad buu u fudud yahay. Dooro mid kale.';
+    if(pin!==pin2) return 'Labada PIN isku mid ma aha.';
+    return '';
+  }
+
+  /* ---------- Stars ---------- */
+  function barGeom(){
+    return [{x:14,y:54,w:18,h:34},{x:41,y:34,w:18,h:54},{x:68,y:14,w:18,h:74}];
+  }
+  function barsMarkup(fill){
+    return barGeom().map(function(b){
+      return '<rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" rx="5" fill="'+fill+'"></rect>';
+    }).join('');
+  }
+  function barsOutline(){
+    return barGeom().map(function(b){
+      return '<rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" rx="5" fill="none" stroke="#ffffff" stroke-width="2.5"></rect>';
+    }).join('');
+  }
+  function buildStars(){
+    $('#bgIcon').innerHTML=barsMarkup('#ffffff');
+    $('#gateIcon').innerHTML=barsMarkup('#ffffff');
+    $('#star').innerHTML=
+      '<defs><clipPath id="starClip"><rect id="starRect" x="0" width="100" y="88" height="0"></rect></clipPath></defs>'+
+      barsMarkup('rgba(255,255,255,0.22)')+
+      '<g clip-path="url(#starClip)">'+barsMarkup('#ffffff')+'</g>'+
+      barsOutline();
+  }
+  function setStar(pct){
+    var r=$('#starRect'); if(!r) return;
+    var h=84*Math.max(0,Math.min(100,pct))/100, y=88-h;
+    r.setAttribute('y',y); r.setAttribute('height',h);
+    r.style.y=y+'px'; r.style.height=h+'px';
+  }
+
+  /* ---------- Home ---------- */
+  function renderCurrency(){
+    $('#cur').innerHTML=CURRENCIES.map(function(c){return '<option value="'+c[0]+'"'+(c[0]===state.currency?' selected':'')+'>'+esc(c[1])+'</option>';}).join('');
+  }
+  function renderHero(){
+    $('#tag').textContent='Nabad'+nm()+'. Kayd yar, mustaqbal weyn.';
+    $('#eye').textContent=state.settings.hide?'Muuji':'Qari';
+    $('#eye').setAttribute('aria-pressed',state.settings.hide?'true':'false');
+    $('#total').textContent=money(totalSaved());
+    var m=monthNet();
+    $('#month').textContent='Bishan: '+(m>0?'+'+money(m):(m<0?(state.settings.hide?'':'\u2212')+money(Math.abs(m)):money(0)));
+    var sumT=0,sumS=0;
+    state.goals.forEach(function(g){
+      if(!(g.target>0)) return;
+      sumT+=g.target;
+      sumS+=Math.min(Math.max(goalSaved(g.id),0),g.target);
+    });
+    if(sumT>0){
+      var pct=sumS/sumT*100;
+      $('#overall').textContent='Hadafyada: '+Math.floor(pct)+'% la gaaray';
+      setStar(pct);
+    }else{
+      $('#overall').textContent='Samee hadaf si aad u bilowdo';
+      setStar(0);
+    }
+  }
+  function renderCheer(){
+    var w=netBetween(6,0), p=netBetween(13,7), msg;
+    if(w.net>0&&p.net>0&&w.net>=p.net) msg='Hambalyo'+nm()+'! Isbuucan waxaad kaydisay '+money(w.net)+', wax ka badan ama u dhigma isbuucii hore ('+money(p.net)+'). Sii wad!';
+    else if(w.net>0) msg='Hambalyo'+nm()+'! Isbuucan waxaad kaydisay '+money(w.net)+'. Talaabo kasta way tirsan tahay.';
+    else if(w.count===0) msg='Isbuucan wax lacag ah lama kayn. Ku bilow lacag yar maanta'+nm()+'.';
+    else msg='Isbuucan waad ka qaadatay wax ka badan intii aad kaydisay. Isbuuca soo socda dib u hagaaji'+nm()+'.';
+    $('#cheer').innerHTML='<h2>Isbuucan</h2><p>'+esc(msg)+'</p>';
+  }
+  function presetRow(){
+    var have=state.goals.map(function(g){return g.name.toLowerCase();});
+    var miss=PRESETS.filter(function(p){return have.indexOf(p.toLowerCase())<0;});
+    if(!miss.length) return '';
+    return '<div class="preset-row"><p>Ku dar kayd:</p><div class="chips">'+
+      miss.map(function(p){return '<button class="chip" data-act="preset-new" data-name="'+esc(p)+'">+ '+esc(p)+'</button>';}).join('')+'</div></div>';
+  }
+  function renderGoals(){
+    var box=$('#goals');
+    var gen=generalSaved();
+    if(!state.goals.length&&gen===0){
+      box.innerHTML='<p class="empty">Weli kayd ma jiro. Samee kaydadkaaga: Xaj, Guur, Xaaladaha degdega, Baabuur, ama hadaf kale.</p>'+presetRow();
+      return;
+    }
+    var html=state.goals.map(function(g){
+      var saved=goalSaved(g.id), hasT=g.target>0;
+      if(!hasT){
+        return '<article class="goal"><div class="g-top"><h3>'+esc(g.name)+'</h3><p class="g-amt"><strong>'+esc(money(saved))+'</strong></p></div>'+
+          '<div class="g-act"><button class="mini" data-act="goal-add" data-id="'+esc(g.id)+'">Ku dar</button><button class="mini quiet" data-act="goal-del" data-id="'+esc(g.id)+'">Tirtir</button></div></article>';
+      }
+      var pct=Math.max(0,Math.min(100,saved/g.target*100));
+      var done=saved>=g.target;
+      var meta='<span>'+Math.floor(pct)+'%</span>';
+      if(done){
+        meta+='<span class="ok">Hadafka waa la gaaray!</span>';
+      }else{
+        var rem2=round2(g.target-saved);
+        meta+='<span>Hadhay: '+esc(money(rem2))+'</span>';
+        if(g.deadline){
+          var days=Math.round((parseD(g.deadline)-parseD(todayStr()))/86400000);
+          if(days<0) meta+='<span>Waqtigii waa la dhaafay</span>';
+          else if(days===0) meta+='<span>Maanta ayaa u dambaysa</span>';
+          else{
+            meta+='<span>'+days+(days===1?' maalin':' maalmood')+' ayaa hadhay</span>';
+            if(days>30) meta+='<span>Bishii kayso '+esc(money(Math.ceil(rem2/(days/30.44))))+'</span>';
+          }
+        }
+      }
+      return '<article class="goal">'+
+        '<div class="g-top"><h3>'+esc(g.name)+'</h3><p class="g-amt"><strong>'+esc(money(saved))+'</strong> / '+esc(money(g.target))+'</p></div>'+
+        '<div class="bar'+(done?' done':'')+'" role="progressbar" aria-label="'+esc(g.name)+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.floor(pct)+'"><span style="width:'+pct+'%"></span></div>'+
+        '<p class="g-meta">'+meta+'</p>'+
+        '<div class="g-act"><button class="mini" data-act="goal-add" data-id="'+esc(g.id)+'">Ku dar</button><button class="mini quiet" data-act="goal-del" data-id="'+esc(g.id)+'">Tirtir</button></div>'+
+      '</article>';
+    }).join('');
+    if(gen!==0){
+      html+='<article class="goal"><div class="g-top"><h3>Kayd guud</h3><p class="g-amt"><strong>'+esc(money(gen))+'</strong></p></div>'+
+        '<div class="g-act"><button class="mini" data-act="goal-add" data-id="">Ku dar</button></div></article>';
+    }
+    box.innerHTML=html+presetRow();
+  }
+  var showAll=false;
+  function renderHist(){
+    var box=$('#hist');
+    if(!state.tx.length){
+      box.innerHTML='<p class="empty">Weli wax lama qorin. Marka aad lacag ku darto, halkan ayay ka muuqan doontaa.</p>';
+      return;
+    }
+    var list=state.tx.slice().sort(function(a,b){
+      if(a.date!==b.date) return a.date<b.date?1:-1;
+      return (b.ts||0)-(a.ts||0);
+    });
+    var LIMIT=15, shown=showAll?list:list.slice(0,LIMIT);
+    var html=shown.map(function(t){
+      var parts=[fmtDate(t.date)];
+      if(t.note) parts.push(esc(t.note));
+      return '<div class="tx"><span class="t-name">'+esc(goalName(t.goalId))+'</span>'+
+        '<span class="t-amt '+(t.type==='in'?'in':'out')+'">'+(state.settings.hide?'':(t.type==='in'?'+':'\u2212'))+esc(money(t.amount))+'</span>'+
+        '<span class="t-sub">'+parts.join(' \u2014 ')+'</span>'+
+        '<button class="mini quiet" data-act="tx-del" data-id="'+esc(t.id)+'">Tirtir</button></div>';
+    }).join('');
+    if(list.length>LIMIT) html+='<button class="link" data-act="more">'+(showAll?'Muuji wax yar':'Muuji dhammaan ('+list.length+')')+'</button>';
+    box.innerHTML=html;
+  }
+
+  /* ---------- Budget (free-form list) ---------- */
+  var NUM_RE=/\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?/;
+  var NUM_RE_G=/\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?/g;
+  var INCOME_RE=/(salary|mushahar|mushaar|mushrah|dakhli|income|waxaan\s+helay|shaqo)/i;
+  var SAVE_RE=/(kayd|save|saving)/i;
+  function parseBudget(text){
+    var parts=[];
+    String(text||'').split(/\n|;/).forEach(function(line){
+      line=line.trim(); if(!line) return;
+      var nums=line.match(NUM_RE_G)||[];
+      var chunks=(nums.length>1&&line.indexOf(',')>-1)?line.split(','):[line];
+      chunks.forEach(function(c){c=c.trim(); if(c) parts.push(c);});
+    });
+    var items=[];
+    parts.forEach(function(p){
+      var m=p.match(NUM_RE); if(!m) return;
+      var amount=parseFloat(m[0].replace(/,/g,'')); if(!(amount>=0)) return;
+      var label=p.replace(m[0],' ').replace(/[$\u20AC\u00A3]|usd|dollars?|doolar/ig,' ')
+        .replace(/^[\s:=\-\u2013\u2014.,]+|[\s:=\-\u2013\u2014.,]+$/g,'').replace(/\s+/g,' ');
+      items.push({label:(label||'Kale').slice(0,40),amount:round2(amount)});
+    });
+    var income=0,incomeLines=0,savePlan=0,expenses=[];
+    items.forEach(function(it){
+      if(INCOME_RE.test(it.label)){ income+=it.amount; incomeLines++; }
+      else if(SAVE_RE.test(it.label)){ savePlan+=it.amount; }
+      else expenses.push(it);
+    });
+    var assumed=false;
+    if(incomeLines===0&&items.length&&!SAVE_RE.test(items[0].label)){
+      income=items[0].amount; assumed=true;
+      expenses=expenses.filter(function(e){return e!==items[0];});
+    }
+    expenses.sort(function(a,b){return b.amount-a.amount;});
+    var spent=round2(expenses.reduce(function(s,e){return s+e.amount;},0));
+    income=round2(income); savePlan=round2(savePlan);
+    return {income:income,savePlan:savePlan,expenses:expenses,spent:spent,left:round2(income-spent-savePlan),assumed:assumed,hasData:items.length>0};
+  }
+  function renderBudget(){
+    var b=parseBudget(state.budget.text), box=$('#bSum'), sp=$('#spSec');
+    if(!b.hasData){
+      box.innerHTML='<p class="empty">Qor liiska kore si aad u aragto xisaabta.</p>';
+      sp.hidden=true; return;
+    }
+    var spPct=b.income>0?Math.round(b.spent/b.income*100):null;
+    var html='<div class="sum">'+
+      '<div><span class="k">Mushahar</span><span class="v">'+esc(money(b.income))+'</span></div>'+
+      '<div><span class="k">Kharash'+(spPct!==null?' ('+spPct+'%)':'')+'</span><span class="v">'+esc(money(b.spent))+'</span></div>'+
+      '<div><span class="k">Kayd la qorsheeyay</span><span class="v">'+esc(money(b.savePlan))+'</span></div>'+
+      '<div class="last'+(b.left<0?' neg':'')+'"><span class="k">'+(b.left<0?'Dhaafsan':'Hadhay')+'</span><span class="v">'+esc(money(Math.abs(b.left)))+'</span></div></div>';
+    if(b.assumed) html+='<p class="foot">Sadarka koowaad waxaa loo tixgeliyay mushaharka.</p>';
+    box.innerHTML=html;
+    if(!b.expenses.length){ sp.hidden=true; return; }
+    sp.hidden=false;
+    var base=b.income>0?b.income:b.spent;
+    $('#spBreak').innerHTML=b.expenses.map(function(e){
+      var pct=base>0?Math.min(100,e.amount/base*100):0;
+      return '<div class="sp"><div class="sp-top"><span class="n">'+esc(e.label)+'</span><span class="a"><strong>'+esc(money(e.amount))+'</strong> &nbsp;'+Math.round(pct)+'%</span></div>'+
+        '<div class="bar" role="progressbar" aria-label="'+esc(e.label)+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(pct)+'"><span style="width:'+pct+'%"></span></div></div>';
+    }).join('');
+  }
+
+  /* ---------- Stop list ---------- */
+  function renderStops(){
+    $('#stopList').innerHTML=state.stops.map(function(s,i){
+      return '<span class="stop">'+esc(s)+'<button aria-label="Ka saar '+esc(s)+'" data-act="stop-del" data-i="'+i+'">\u00D7</button></span>';
+    }).join('');
+    var have=state.stops.map(function(s){return s.toLowerCase();});
+    $('#stopSug').innerHTML=STOP_SUGGEST.filter(function(s){return have.indexOf(s.toLowerCase())<0;}).map(function(s){
+      return '<button class="chip" data-act="stop-add" data-name="'+esc(s)+'">+ '+esc(s)+'</button>';
+    }).join('');
+  }
+  function addStop(label){
+    label=(label||'').trim().slice(0,60); if(!label) return;
+    if(state.stops.some(function(s){return s.toLowerCase()===label.toLowerCase();})) return;
+    state.stops.push(label); save(); renderStops(); renderTips();
+  }
+
+  /* ---------- Tips (computed on this device, nothing is sent) ---------- */
+  var GENERIC_TIPS=[
+    'Marka aad lacag hesho, marka hore kayso, ka dibna bixi waxa hadhay.',
+    'Sharciga 50/30/20: 50% baahiyaha (guri, cunto, biyo, koronto), 30% rabitaanka, 20% kayd.',
+    'Isbarbar dhig koronto, biyo iyo internet bil kasta si aad u aragto haddii ay kordhayaan.',
+    'Ku hadal iyo internet: dooro xirmo bil ah, inta badan waa ka jaban yihiin isticmaalka maalinlaha ah.',
+    'Ka hor inta aadan wax qaali ah iibsan, sug 24 saacadood. Inta badan rabitaanku wuu dhamaadaa.',
+    'Hadaf kasta u samee taariikh. Waxay kuu sheegtaa inta aad bishii u baahan tahay.'
+  ];
+  function computeTips(){
+    var out=[], b=parseBudget(state.budget.text);
+    var hasEmergency=state.goals.some(function(g){return /degdeg/i.test(g.name);});
+    if(b.income>0){
+      var spPct=Math.round(b.spent/b.income*100), savePct=Math.round(b.savePlan/b.income*100);
+      if(b.left<0) out.push('Kharashkaaga iyo kaydkaaga waxay mushaharka ka badan yihiin '+money(Math.abs(b.left))+'. Hoos u dhig kharashka ugu weyn.');
+      else if(spPct>=80) out.push('Kharashku waa '+spPct+'% mushaharka. Hadhaaga kayd u ah aad buu yar yahay.');
+      if(b.savePlan===0) out.push('Ma qorin inta aad kaydin karto. Isku day inaad ugu yaraan 20% mushaharka kaydiso.');
+      else if(savePct<10) out.push('Kaydkaagu waa '+savePct+'% mushaharka. Ku dhawaad 20% ayaa fiican.');
+      b.expenses.slice(0,3).forEach(function(e){
+        var p=Math.round(e.amount/b.income*100);
+        if(p>=25||(/shopping|iib/i.test(e.label)&&p>=15)) out.push(e.label+' waa '+p+'% mushaharkaaga. Ka fiiri meel aad wax ka dhimi karto.');
+      });
+      if(b.left>0&&state.goals.length) out.push('Waxaad haysataa '+money(b.left)+' oo hadhay. U qaybi kaydadkaaga, marka hore Xaaladaha degdega.');
+    }
+    if(state.stops.length) out.push('Waxaad go\'aansatay inaad joojiso: '+state.stops.join(', ')+'. Lacagta ka badbaaday u wareeji kaydkaaga.');
+    if(!hasEmergency) out.push('Samee kayd Xaaladaha degdega ah. Ujeedadu waa in uu dabooli karo ugu yaraan 3 bilood oo kharash ah.');
+    var d=new Date(), doy=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000), i=0;
+    var res=out.slice(0,3);
+    while(res.length<4&&i<GENERIC_TIPS.length){ res.push(GENERIC_TIPS[(doy+i)%GENERIC_TIPS.length]); i++; }
+    return res;
+  }
+  function renderTips(){
+    $('#tips').innerHTML=computeTips().map(function(t){return '<div class="tip"><p>'+esc(t)+'</p></div>';}).join('');
+  }
+
+  /* ---------- Me tab ---------- */
+  function renderMe(){
+    var n=(state.nick||'').trim();
+    $('#meInitial').textContent=n?n.charAt(0).toUpperCase():'\u2605';
+    $('#meName').textContent=n||'Kaydkayga';
+    $('#remOn').checked=!!rem.on;
+    $('#remFreq').value=rem.freq;
+    $('#remDay').value=String(rem.day);
+    $('#remTime').value=rem.time;
+    $('#remDayField').hidden=rem.freq!=='weekly';
+    $('#remOpts').hidden=!rem.on;
+    $('#autoLock').value=String(state.settings.autoLock);
+  }
+
+  /* ---------- Reminder (generic text only, no amounts) ---------- */
+  var notifiedKey='';
+  function reminderDue(){
+    if(!rem.on) return false;
+    var now=new Date();
+    if(rem.lastKey===todayStr()) return false;
+    if(rem.freq==='weekly'&&now.getDay()!==Number(rem.day)) return false;
+    var p=(rem.time||'20:00').split(':');
+    return now.getHours()*60+now.getMinutes()>=Number(p[0])*60+Number(p[1]);
+  }
+  function checkReminder(){
+    var due=reminderDue();
+    $('#remind').hidden=!(due&&key);
+    $('#gateRemind').hidden=!(due&&!key);
+    if(due&&notifiedKey!==todayStr()){
+      notifiedKey=todayStr();
+      try{ if(window.Notification&&Notification.permission==='granted') new Notification('Kaydkayga',{body:'Waa waqtigii aad kaydin lahayd.'}); }catch(e){}
+    }
+  }
+  function dismissReminder(){ rem.lastKey=todayStr(); saveRem(); checkReminder(); }
+
+  function render(){
+    renderCurrency(); renderHero(); renderCheer(); renderGoals(); renderHist();
+    renderBudget(); renderStops(); renderTips(); renderMe(); checkReminder();
+  }
+
+  /* ---------- Routing, tabs, locking ---------- */
+  var tab='home', lastActive=Date.now(), hiddenAt=0, aiConsented=false, aiCtl=null;
+  function setTab(name){
+    tab=name;
+    document.querySelectorAll('.panel').forEach(function(p){ p.hidden=(p.dataset.panel!==name); });
+    document.querySelectorAll('.nav button').forEach(function(b){
+      if(b.dataset.tab===name) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+    });
+    window.scrollTo(0,0);
+  }
+  function route(){
+    var gate=$('#gate'), app=$('#app');
+    $('#cryptoErr').hidden=cryptoOk;
+    if(!cryptoOk){ gate.hidden=false; app.hidden=true; $('#signup').hidden=true; $('#unlock').hidden=true; return; }
+    if(key){
+      gate.hidden=true; app.hidden=false;
+      $('#bText').value=state.budget.text||'';
+      render(); setTab(tab); lastActive=Date.now();
+      return;
+    }
+    app.hidden=true; gate.hidden=false;
+    var lg=readLegacy(), vExists=hasVault();
+    var needsUnlock=vExists||!!(lg&&lg.profile&&lg.profile.hash);
+    $('#signup').hidden=needsUnlock; $('#unlock').hidden=!needsUnlock;
+    $('#ulHello').textContent=(!vExists&&needsUnlock)?'Xogtaada hore hadda waa la xifaadayaa. Geli PIN-kaagii hore.':'Geli PIN-kaaga.';
+    showWait(); checkReminder();
+  }
+  function clearDom(){
+    ['#goals','#hist','#bSum','#spBreak','#cheer','#tips','#stopList','#stopSug','#aiOut','#aiNote','#pinDone'].forEach(function(s){ $(s).innerHTML=''; });
+    ['#total','#month','#overall','#tag','#meName'].forEach(function(s){ $(s).textContent=''; });
+    ['#bText','#aiQ','#stopIn','#txAmount','#txNote','#gName','#gInit','#gTarget','#cpCur','#cpNew','#cpNew2','#ulPin','#suPin','#suPin2'].forEach(function(s){ $(s).value=''; });
+    setStar(0);
+  }
+  async function lockNow(){
+    if(aiCtl){ try{ aiCtl.abort(); }catch(e){} }
+    document.querySelectorAll('dialog[open]').forEach(function(d){ d.close(); });
+    if(pf){ try{ await pf; }catch(e){} }
+    key=null; vault=null; state=defaults(); aiConsented=false; pending=null; tab='home'; showAll=false;
+    clearDom(); route();
+  }
+  function wipeAll(){
+    try{ [V1,V2,REM,LOCK].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){}
+    key=null; vault=null; state=defaults(); rem=defaultRem(); aiConsented=false; pending=null; tab='home'; showAll=false; dirty=false;
+    clearDom(); $('#suName').value='';
+  }
+
+  /* ---------- Setup / unlock ---------- */
+  async function doSetup(){
+    var err=$('#suErr'); err.textContent='';
+    var nick=$('#suName').value.trim().slice(0,30), pin=$('#suPin').value, pin2=$('#suPin2').value;
+    var p=pinProblem(pin,pin2); if(p){ err.textContent=p; return; }
+    var btn=$('#suBtn'); busy(btn,true);
+    try{
+      var salt=crypto.getRandomValues(new Uint8Array(16));
+      key=await deriveKey(pin,salt,ITER); vault={salt:salt,iter:ITER};
+      var lg=readLegacy();
+      var imp=(lg&&!lg.profile)?lg:{};
+      state=normalize(imp); state.nick=nick;
+      if(imp.reminder&&imp.reminder.on&&!rem.on){ rem=Object.assign(defaultRem(),imp.reminder); saveRem(); }
+      await writeVault();
+      try{ localStorage.removeItem(V1); }catch(e){}
+      clearFails();
+      $('#suPin').value=''; $('#suPin2').value=''; $('#suName').value='';
+      busy(btn,false); route(); return;
+    }catch(e){
+      key=null; vault=null; state=defaults();
+      err.textContent='Xogta lama kaydin karo. Hubi in browser-ku ogol yahay kaydinta.';
+    }
+    busy(btn,false);
+  }
+  async function doUnlock(){
+    if(lockWait()>0) return;
+    var pin=$('#ulPin').value, btn=$('#ulBtn'), err=$('#ulErr'); err.textContent=''; waiting=false;
+    if(!pin){ err.textContent='Geli PIN-kaaga.'; return; }
+    busy(btn,true);
+    var storageProblem=false;
+    try{
+      var raw=null; try{ raw=localStorage.getItem(V2); }catch(e){}
+      if(raw){
+        var rec=JSON.parse(raw), salt=unb64(rec.salt);
+        var k=await deriveKey(pin,salt,rec.iter);
+        var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(rec.iv),additionalData:AAD},k,unb64(rec.ct));
+        state=normalize(JSON.parse(dec.decode(pt))); key=k; vault={salt:salt,iter:rec.iter};
+      }else{
+        var lg=readLegacy();
+        if(!lg||!lg.profile||!lg.profile.hash) throw new Error('nolegacy');
+        var h=await legacyHash(pin,lg.profile.salt);
+        if(h!==lg.profile.hash) throw new Error('badpin');
+        var salt2=crypto.getRandomValues(new Uint8Array(16));
+        var k2=await deriveKey(pin,salt2,ITER);
+        state=normalize(lg); key=k2; vault={salt:salt2,iter:ITER};
+        try{ await writeVault(); }catch(e){ storageProblem=true; throw e; }
+        if(lg.reminder&&lg.reminder.on&&!rem.on){ rem=Object.assign(defaultRem(),lg.reminder); saveRem(); }
+        try{ localStorage.removeItem(V1); }catch(e){}
+      }
+      clearFails(); $('#ulPin').value='';
+      busy(btn,false); route(); return;
+    }catch(e){
+      key=null; vault=null; state=defaults(); $('#ulPin').value='';
+      if(storageProblem) err.textContent='Xogta lama kaydin karo. Hubi in browser-ku ogol yahay kaydinta.';
+      else{ noteFail(); err.textContent='PIN-ku waa khalad.'; }
+    }
+    busy(btn,false); showWait();
+  }
+  async function doChangePin(){
+    var err=$('#cpErr'); err.textContent='';
+    if(lockWait()>0){ err.textContent='Sug wax yar ka hor intaadan isku dayin.'; return; }
+    var cur=$('#cpCur').value, np=$('#cpNew').value, np2=$('#cpNew2').value;
+    var p=pinProblem(np,np2); if(p){ err.textContent=p; return; }
+    var btn=$('#cpBtn'); busy(btn,true);
+    try{
+      var rec=JSON.parse(localStorage.getItem(V2));
+      var k=await deriveKey(cur,unb64(rec.salt),rec.iter);
+      await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(rec.iv),additionalData:AAD},k,unb64(rec.ct));
+    }catch(e){
+      noteFail(); err.textContent='PIN-ka hadda jira waa khalad.'; busy(btn,false); return;
+    }
+    clearFails();
+    var oldKey=key, oldVault=vault;
+    try{
+      var salt=crypto.getRandomValues(new Uint8Array(16));
+      key=await deriveKey(np,salt,ITER); vault={salt:salt,iter:ITER};
+      dirty=true; if(!saving) pf=flush();
+      await pf;
+      if(storeFailed) throw new Error('store');
+      ['#cpCur','#cpNew','#cpNew2'].forEach(function(s){ $(s).value=''; });
+      $('#dlgPin').close();
+      $('#pinDone').textContent='PIN-ka waa la beddelay.';
+    }catch(e){
+      key=oldKey; vault=oldVault;
+      err.textContent='PIN-ka lama beddeli karin. Isku day mar kale.';
+    }
+    busy(btn,false);
+  }
+
+  /* ---------- Transaction dialog ---------- */
+  function txType(){
+    var r=document.getElementsByName('txType');
+    for(var i=0;i<r.length;i++) if(r[i].checked) return r[i].value;
+    return 'in';
+  }
+  function setTxTitle(){ $('#txTitle').textContent=txType()==='out'?'Ka qaad lacag':'Ku dar lacag'; }
+  function openTx(type,goalId){
+    var radios=document.getElementsByName('txType');
+    for(var i=0;i<radios.length;i++) radios[i].checked=(radios[i].value===type);
+    setTxTitle();
+    var sel=$('#txGoal');
+    sel.innerHTML='<option value="">Kayd guud (hadaf la\'aan)</option>'+state.goals.map(function(g){return '<option value="'+esc(g.id)+'">'+esc(g.name)+'</option>';}).join('');
+    sel.value=goalId||'';
+    $('#txAmount').value=''; $('#txDate').value=todayStr(); $('#txNote').value=''; $('#txErr').textContent='';
+    $('#dlgTx').showModal(); $('#txAmount').focus();
+  }
+  function saveTx(){
+    var type=txType(), goalId=$('#txGoal').value||null;
+    var amt=round2(parseFloat($('#txAmount').value));
+    var date=$('#txDate').value||todayStr(), note=$('#txNote').value.trim().slice(0,80);
+    var err=function(m){$('#txErr').textContent=m;};
+    if(!(amt>0)){ err('Geli lacag ka weyn eber.'); return; }
+    if(type==='out'){
+      var have=goalId?goalSaved(goalId):generalSaved();
+      if(amt>have+0.001){ err('Kaydka kuma filna. Waxaa jira: '+money(Math.max(0,have))); return; }
+    }
+    state.tx.push({id:uid(),goalId:goalId,type:type,amount:amt,date:date,note:note,ts:Date.now()});
+    if(type==='in'&&date===todayStr()){ rem.lastKey=todayStr(); saveRem(); }
+    save(); render(); $('#dlgTx').close();
+  }
+
+  /* ---------- Goal / pot dialog ---------- */
+  function openGoal(name){
+    $('#presetChips').innerHTML=PRESETS.map(function(p){return '<button class="chip" data-act="preset-fill" data-name="'+esc(p)+'">'+esc(p)+'</button>';}).join('');
+    $('#gName').value=name||''; $('#gInit').value=''; $('#gTarget').value=''; $('#gDeadline').value=''; $('#gErr').textContent='';
+    $('#dlgGoal').showModal();
+    (name?$('#gInit'):$('#gName')).focus();
+  }
+  function saveGoal(){
+    var name=$('#gName').value.trim().slice(0,40);
+    var init=round2(parseFloat($('#gInit').value)||0);
+    var tRaw=$('#gTarget').value, target=tRaw===''?0:round2(parseFloat(tRaw));
+    var deadline=$('#gDeadline').value||'';
+    var err=function(m){$('#gErr').textContent=m;};
+    if(!name){ err('Geli magaca kaydka.'); return; }
+    if(tRaw!==''&&!(target>0)){ err('Lacagta la rabo waa inay ka weyn tahay eber.'); return; }
+    var g={id:uid(),name:name,target:target>0?target:0,deadline:target>0?deadline:''};
+    state.goals.push(g);
+    if(init>0) state.tx.push({id:uid(),goalId:g.id,type:'in',amount:init,date:todayStr(),note:'Bilow',ts:Date.now()});
+    save(); render(); $('#dlgGoal').close();
+  }
+
+  /* ---------- Confirm dialog ---------- */
+  var pending=null;
+  function askConfirm(kind,id){
+    pending={kind:kind,id:id};
+    $('#cfMsg').textContent={
+      goal:'Ma hubtaa inaad tirtirayso kaydkan? Lacagta ku jirta waxay u wareegi doontaa Kayd guud.',
+      tx:'Ma hubtaa inaad tirtirayso qoraalkan?',
+      reset:'Waxaad tirtiri doontaa dhammaan xogta: PIN-ka, kaydadka, liiska iyo taariikhda. Tan dib looma soo celin karo. Ma hubtaa?'
+    }[kind];
+    $('#dlgConfirm').showModal();
+  }
+  function doConfirm(){
+    if(!pending) return;
+    var kind=pending.kind;
+    if(kind==='goal'){
+      state.goals=state.goals.filter(function(g){return g.id!==pending.id;});
+      state.tx.forEach(function(t){ if(t.goalId===pending.id) t.goalId=null; });
+    }else if(kind==='tx'){
+      state.tx=state.tx.filter(function(t){return t.id!==pending.id;});
+    }
+    var id=pending.id; pending=null;
+    $('#dlgConfirm').close();
+    if(kind==='reset'){ wipeAll(); route(); return; }
+    save(); render();
+  }
+
+  /* ---------- AI helper (explicit consent, minimal data) ---------- */
+  var sampleFn=null;
+  function initAI(){
+    if(!window.claude||typeof window.claude.use!=='function') return;
+    window.claude.use('sample').then(function(fn){
+      if(fn){ sampleFn=fn; $('#aiSec').hidden=false; }
+    }).catch(function(){});
+  }
+  function aiContext(){
+    var b=parseBudget(state.budget.text);
+    return {
+      currency:state.currency,
+      totalSaved:totalSaved(),
+      savedThisWeek:netBetween(6,0).net,
+      budget:{income:b.income,incomeWasAssumed:b.assumed,plannedSavings:b.savePlan,expenses:b.expenses.map(function(e){return {label:e.label,amount:e.amount};}),leftover:b.left},
+      thingsUserWantsToStop:state.stops.slice(0,20),
+      savingsPotsAndGoals:state.goals.slice(0,20).map(function(g){return {name:g.name,saved:goalSaved(g.id),target:g.target>0?g.target:null};})
+    };
+  }
+  function aiErrorCopy(code){
+    switch(code){
+      case 'rate_limited': return 'Wax badan ayaad weydiisay. Sug wax yar, ka dibna mar kale isku day.';
+      case 'session_expired': return 'Fadlan mar kale gal Claude, ka dibna isku day.';
+      case 'refused': return 'AI-gu ma jawaabi karin su\'aashan. Beddel su\'aasha oo mar kale isku day.';
+      case 'prompt_too_large': return 'Xogtu aad bay u badan tahay. Yaree liiska oo mar kale isku day.';
+      default: return 'Jawaab lama helin. Isku day mar kale.';
+    }
+  }
+  function askAI(){
+    if(!sampleFn||!key) return;
+    if(!aiConsented){
+      $('#aiPreview').textContent=JSON.stringify(Object.assign(aiContext(),{userQuestion:($('#aiQ').value||'').trim()}),null,1);
+      $('#dlgAi').showModal(); return;
+    }
+    var q=($('#aiQ').value||'').trim();
+    var out=$('#aiOut'), note=$('#aiNote'), ask=$('#aiAsk'), stop=$('#aiStop');
+    note.textContent=''; out.textContent='Waan fekerayaa...';
+    ask.disabled=true; stop.hidden=false;
+    aiCtl=new AbortController();
+    var prompt=
+      'You are a friendly personal-finance helper inside a Somali-language savings app.\n'+
+      'RULES:\n'+
+      '- Reply ONLY in Somali (Af-Soomaali), in simple everyday words.\n'+
+      '- Plain text only: no markdown, no asterisks, no headers. Short lines; you may start lines with "-".\n'+
+      '- Maximum about 200 words. Be practical and specific to the numbers below, using the user\'s currency.\n'+
+      '- The budget data was parsed automatically from a free-form list the user typed and may contain mistakes.\n'+
+      '- Do not ask for, or repeat back, personal identifiers such as names, phone numbers or account numbers.\n'+
+      '- If there is little or no data, say so briefly and give general saving tips.\n'+
+      '- No investment, legal or tax advice. Do not invent numbers.\n'+
+      'DO, in this order:\n'+
+      '1. One sentence summarising income versus spending.\n'+
+      '2. The 1-2 biggest problems in the spending.\n'+
+      '3. How much they can realistically save each month and how to split it across their savings pots/goals (suggest an emergency fund first if none exists).\n'+
+      '4. 2-3 concrete ways to stop the habits in thingsUserWantsToStop (if any).\n'+
+      '5. One short encouraging line.\n\n'+
+      'USER DATA (JSON): '+JSON.stringify(aiContext())+'\n\n'+
+      'EXTRA QUESTION FROM USER (may be empty): '+q;
+    sampleFn(prompt,{
+      signal:aiCtl.signal,
+      cache:false,
+      onText:function(o){ out.textContent=o.text; }
+    }).then(function(r){
+      out.textContent=r.text;
+      if(r.truncated) note.textContent='Jawaabtu way go\'day. Weydii wax yar mar kale.';
+    }).catch(function(e){
+      e=e||{};
+      out.textContent=e.text||'';
+      var hide=['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'];
+      if(hide.indexOf(e.code)>-1){ $('#aiSec').hidden=true; return; }
+      if(e.code!=='cancelled') note.textContent=aiErrorCopy(e.code);
+    }).then(function(){
+      ask.disabled=false; stop.hidden=true; aiCtl=null;
+    });
+  }
+
+  /* ---------- Events ---------- */
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-act]'); if(!b) return;
+    switch(b.dataset.act){
+      case 'signup': doSetup(); break;
+      case 'unlock': doUnlock(); break;
+      case 'forgot': $('#cfMsg').textContent='Haddii aad illowday PIN-ka, xogta dib looma heli karo. Waxaad tirtiri kartaa dhammaan xogta oo aad mar kale bilaabi kartaa. Ma hubtaa?'; pending={kind:'reset'}; $('#dlgConfirm').showModal(); break;
+      case 'pin-eye':
+        var inp=document.getElementById(b.dataset.target);
+        var show=inp.type==='password'; inp.type=show?'text':'password'; b.textContent=show?'Qari':'Muuji'; break;
+      case 'tab': setTab(b.dataset.tab); break;
+      case 'lock': lockNow(); break;
+      case 'reset-ask': askConfirm('reset'); break;
+      case 'pin-change':
+        ['#cpCur','#cpNew','#cpNew2'].forEach(function(s){ $(s).value=''; }); $('#cpErr').textContent=''; $('#pinDone').textContent='';
+        $('#dlgPin').showModal(); $('#cpCur').focus(); break;
+      case 'pin-save': doChangePin(); break;
+      case 'toggle-hide': state.settings.hide=!state.settings.hide; save(); render(); break;
+      case 'add-in': openTx('in',null); break;
+      case 'add-out': openTx('out',null); break;
+      case 'remind-add': openTx('in',null); break;
+      case 'remind-dismiss': dismissReminder(); break;
+      case 'goal-add': openTx('in',b.dataset.id||null); break;
+      case 'new-goal': openGoal(''); break;
+      case 'preset-new': openGoal(b.dataset.name); break;
+      case 'preset-fill': $('#gName').value=b.dataset.name; $('#gInit').focus(); break;
+      case 'goal-del': askConfirm('goal',b.dataset.id); break;
+      case 'tx-del': askConfirm('tx',b.dataset.id); break;
+      case 'more': showAll=!showAll; renderHist(); break;
+      case 'close': b.closest('dialog').close(); break;
+      case 'tx-save': saveTx(); break;
+      case 'goal-save': saveGoal(); break;
+      case 'confirm-yes': doConfirm(); break;
+      case 'stop-add': addStop(b.dataset.name); break;
+      case 'stop-add-input': addStop($('#stopIn').value); $('#stopIn').value=''; break;
+      case 'stop-del': state.stops.splice(Number(b.dataset.i),1); save(); renderStops(); renderTips(); break;
+      case 'ai-ask': askAI(); break;
+      case 'ai-consent': aiConsented=true; $('#dlgAi').close(); askAI(); break;
+      case 'ai-stop': if(aiCtl) aiCtl.abort(); break;
+    }
+  });
+  document.addEventListener('change',function(e){
+    var id=e.target.id;
+    if(e.target.name==='txType') setTxTitle();
+    if(id==='cur'){ state.currency=e.target.value; save(); render(); }
+    if(id==='autoLock'){ state.settings.autoLock=Number(e.target.value)||2; save(); }
+    if(id==='remOn'){
+      rem.on=e.target.checked; saveRem(); renderMe(); checkReminder();
+      try{ if(e.target.checked&&window.Notification&&Notification.permission==='default') Notification.requestPermission(); }catch(x){}
+    }
+    if(id==='remFreq'){ rem.freq=e.target.value; saveRem(); renderMe(); checkReminder(); }
+    if(id==='remDay'){ rem.day=Number(e.target.value); saveRem(); checkReminder(); }
+    if(id==='remTime'){ rem.time=e.target.value||'20:00'; saveRem(); checkReminder(); }
+  });
+  $('#bText').addEventListener('input',function(e){
+    state.budget.text=e.target.value.slice(0,3000); save(); renderBudget(); renderTips();
+  });
+  function onEnter(sel,fn){ $(sel).addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); fn(); } }); }
+  onEnter('#suPin',doSetup); onEnter('#suPin2',doSetup); onEnter('#suName',doSetup);
+  onEnter('#ulPin',doUnlock);
+  onEnter('#cpNew2',doChangePin);
+  onEnter('#stopIn',function(){ addStop($('#stopIn').value); $('#stopIn').value=''; });
+  onEnter('#aiQ',askAI);
+  ['#dlgTx','#dlgGoal'].forEach(function(id){
+    $(id).addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.type!=='radio'){
+        e.preventDefault(); if(id==='#dlgTx') saveTx(); else saveGoal();
+      }
+    });
+  });
+
+  /* Auto-lock on inactivity or when the app was in the background, and veil the screen when hidden */
+  ['pointerdown','keydown','touchstart','scroll'].forEach(function(ev){
+    document.addEventListener(ev,function(){ lastActive=Date.now(); },{passive:true,capture:true});
+  });
+  setInterval(function(){
+    if(key&&Date.now()-lastActive>(state.settings.autoLock||2)*60000) lockNow();
+  },5000);
+  setInterval(checkReminder,30000);
+  document.addEventListener('visibilitychange',function(){
+    document.body.classList.toggle('veil',document.hidden);
+    if(document.hidden){ hiddenAt=Date.now(); }
+    else if(key&&hiddenAt&&Date.now()-hiddenAt>60000){ lockNow(); }
+  });
+
+  $('#remDay').innerHTML=SO_DAYS.map(function(d,i){return '<option value="'+i+'">'+d+'</option>';}).join('');
+  try{ localStorage.setItem('kaydkayga:t','1'); localStorage.removeItem('kaydkayga:t'); }catch(e){ setStoreFail(true); }
+  buildStars();
+  route();
+  initAI();
+})();
+
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+</script>
+</body>
+</html>
